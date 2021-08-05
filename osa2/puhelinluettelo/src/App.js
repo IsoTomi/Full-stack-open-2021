@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-
+import personService from './services/persons'
 
 // Filter-component
 const Filter = ({filter, filterHandler}) => {
@@ -29,7 +28,7 @@ const PersonForm = (props) => {
 }
 
 // Persons-component
-const Persons = ({persons, filter}) => {
+const Persons = ({persons, filter, removeHandler}) => {
   const regex = new RegExp(filter, 'i');
   const filteredPersons = persons.filter(person => person.name.match(regex));
 
@@ -37,7 +36,10 @@ const Persons = ({persons, filter}) => {
     <div>
       <ul>
         {filteredPersons.map(person =>
-          <li>{person.name} {person.number}</li>
+          <li key={person.id}>
+            {person.name} {person.number} 
+            <button onClick={() => removeHandler(person.id)}>Delete</button>
+          </li>
         )}
       </ul>
     </div>
@@ -46,37 +48,54 @@ const Persons = ({persons, filter}) => {
   
 // App-component
 const App = () => {
-  // Hooks
+  // HOOKS
   const [ persons, setPersons ] = useState([]);
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         setPersons(response.data)
-      })
+      })      
   }, [])
 
-  // Event handlers
+  // EVENT HANDLERS
   const addPerson = (event) => {
     event.preventDefault();
       
-    // Is the person already listed
-    const found = persons.find(person => person.name === newName);
-    if (found !== undefined)
-    return alert(`${newName} is already added to phonebook`);
-    
     const personObject = {
       name: newName,
       number: newNumber
     };
-    
-    setPersons(persons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
+
+    // Is the person already listed
+    const found = persons.find(person => person.name === newName);
+
+    if (found !== undefined) {
+      if (window.confirm(`${newName} is already added to phonebook, 
+      replace the old number with a new one?`) === true) {
+        personService
+        .update(found.id, personObject)
+        .then(response => {
+          const newArray = persons.map(person => person.id === found.id ? 
+            {...person, number: newNumber} : person)
+          setPersons(newArray)
+          setNewName('')
+          setNewNumber('')
+        })
+      }
+    } else {
+      personService
+      .create(personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
+    } 
   }
 
   const handlePersonChange = (event) => {
@@ -87,14 +106,29 @@ const App = () => {
     setNewNumber(event.target.value);
   }
 
-  const handlFilterChange = (event) => {
+  const handleFilterChange = (event) => {
     setFilter(event.target.value);
   }
 
+  const handlePersonRemove = (id) => {
+    const name = persons.find(person => person.id === id).name
+    
+    if (window.confirm(`Delete ${name}`) === true)
+    {
+      personService
+      .remove(id)
+      .then(response => {
+        const newArray = persons.filter(person => person.id !== id)
+        setPersons(newArray)
+      })
+    }
+  }
+
+  // Render
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filter={filter} filterHandler={handlFilterChange} />
+      <Filter filter={filter} filterHandler={handleFilterChange} />
       <h2>Add new</h2>
       <PersonForm 
         newName={newName}
@@ -104,7 +138,7 @@ const App = () => {
         numberChanger={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter}/>
+      <Persons persons={persons} filter={filter} removeHandler={handlePersonRemove} />
       
     </div>
   )    
