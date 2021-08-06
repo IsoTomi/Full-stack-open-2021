@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const api_key = process.env.REACT_APP_API_KEY;
 
 // Filter-component
 const Filter = ({filter, filterHandler}) => {
@@ -13,13 +14,12 @@ const Filter = ({filter, filterHandler}) => {
 
 // CountryDetails-component
 const CountryDetails = ({country}) => {
-  const api_key = process.env.REACT_APP_API_KEY;
-
   // Hooks
   const [ weather, setWeather ] = useState([]);
   const [ ready, setReady ] = useState(false);
 
   useEffect(() => {
+    // Get the weather from the capital city
     axios
       .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${country.capital}`)
       .then(response => {
@@ -56,7 +56,7 @@ const CountryDetails = ({country}) => {
 
 // App-component
 const App = () => {
-  // Hooks
+  // HOOKS
   const [ countries, setCountries ] = useState([]);
   const [ filter, setFilter ] = useState('');
 
@@ -68,12 +68,16 @@ const App = () => {
       })
   }, []);
 
-  // Event handlers
+  // EVENT HANDLERS
+
+  // handleFilterChange - Handles the changes in the Filter - input field
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   }
 
-  // Other
+  // OTHER FUNCTIONS
+
+  // Filter the data using regular expression
   const regex = new RegExp(filter, 'i');
   const filteredCountries = countries.filter(country => country.name.match(regex));
 
