@@ -1,73 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import Filter from './components/Filter'
+import Notification from './components/Notification'
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
 import personService from './services/persons'
-
-// Filter-component
-const Filter = ({filter, filterHandler}) => {
-  return (
-    <div>
-      Filter with: <input value={filter} onChange={filterHandler} />
-    </div> 
-  );
-}
-
-// Notification-conponent
-const Notification = ({ message, error }) => {
-  if (message === null) {
-    return null
-  }
-
-  // Is the messsage an error message?
-  const className = error === true ? "error" : "notification"
-
-  return (
-    <div className={className}>
-      
-      {message}
-    </div>
-  )
-}
-
-// Persons-component
-const Persons = ({persons, filter, removeHandler}) => {
-	// Fiter the persons using regular expressions
-	const regex = new RegExp(filter, 'i');
-	const filteredPersons = persons.filter(person => person.name.match(regex));
-
-	return (
-		<div>
-			<ul>
-				{filteredPersons.map(person =>
-				<li key={person.id}>
-					{person.name} {person.number} 
-					<button onClick={() => removeHandler(person.id)}>Delete</button>
-				</li>
-			)}
-			</ul>
-		</div>
-	);
-}
-
-// PersonForm-component
-const PersonForm = (props) => {
-  return (
-    <form onSubmit={props.add} >
-      <div>
-        Name: <input value={props.newName} onChange={props.personChanger} />
-      </div>
-      <div>
-        Number: <input value={props.newNumber} onChange={props.numberChanger} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>    
-  );
-}
 
 // App-component
 const App = () => {
   // HOOKS
   const [ persons, setPersons ] = useState([]);
+  const [ newPerson, setNewPerson ] = useState({})
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
@@ -78,7 +20,7 @@ const App = () => {
     personService
       .getAll()
       .then(response => {
-        setPersons(response.data)
+        setPersons(response)
       })      
   }, [])
 
@@ -96,6 +38,17 @@ const App = () => {
     // Is the person been already listed?
     const found = persons.find(person => person.name === newName);
 
+    // Has the user gave a name and a number?
+    // No?
+    if (newName === '' || newNumber === '') {
+       // Show the notification for 5 seconds
+       setNoteMessage('Please give a name and a number.')
+       setTimeout(() => {
+         setNoteMessage(null)
+       }, 5000)
+       return 
+    }
+
     if (found !== undefined) {
       // Person is already been listed
       if (window.confirm(`${newName} is already added to phonebook, 
@@ -111,7 +64,7 @@ const App = () => {
           setError(false)       // Set notification as non-error
 
           // Show the notification for 5 seconds
-          setNoteMessage(`Changed the number for ${response.data.name}`)
+          setNoteMessage(`Changed the number for ${response.name}`)
           setTimeout(() => {
             setNoteMessage(null)
           }, 5000)
@@ -141,13 +94,13 @@ const App = () => {
       .create(personObject)
       .then(response => {
         // Update
-        setPersons(persons.concat(response.data))
+        setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
         // Set notification as non-error
         setError(false)
         // Show notification for 5 secoonds
-        setNoteMessage(`Added ${response.data.name}`)
+        setNoteMessage(`Added ${response.name}`)
         setTimeout(() => {
           setNoteMessage(null)
         }, 5000)
@@ -195,7 +148,7 @@ const App = () => {
     }
   }
 
-  // Render
+  // RENDER
   return (
     <div>
       <h2>Phonebook</h2>

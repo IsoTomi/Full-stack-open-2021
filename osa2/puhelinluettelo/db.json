@@ -6,11 +6,6 @@
       "id": 1
     },
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": 3
@@ -21,8 +16,8 @@
       "id": 4
     },
     {
-      "name": "Test Person",
-      "number": "123456789",
+      "name": "Tomi Isojärvi",
+      "number": "123456",
       "id": 5
     }
   ]
