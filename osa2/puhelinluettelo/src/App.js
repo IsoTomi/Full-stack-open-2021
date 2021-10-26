@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Notification from './components/Notification'
-import Persons from './components/Persons'
+//import Persons from './components/Persons'
+import People from './components/People'
 import PersonForm from './components/PersonForm'
-import personService from './services/persons'
+//import personService from './services/persons'
+import personService from './services/people'
 
 // App-component
 const App = () => {
   // HOOKS
-  const [ persons, setPersons ] = useState([]);
-  const [ newPerson, setNewPerson ] = useState({})
+  //const [ persons, setPersons ] = useState([]);
+  const [ people, setPeople ] = useState([]);
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filter, setFilter ] = useState('');
@@ -20,7 +22,7 @@ const App = () => {
     personService
       .getAll()
       .then(response => {
-        setPersons(response)
+        setPeople(response)
       })      
   }, [])
 
@@ -36,7 +38,7 @@ const App = () => {
     };
 
     // Is the person been already listed?
-    const found = persons.find(person => person.name === newName);
+    const found = people.find(person => person.name === newName);
 
     // Has the user gave a name and a number?
     // No?
@@ -58,9 +60,9 @@ const App = () => {
         .update(found.id, personObject)
         .then(response => {
           // Map a new array with the changed number
-          const newArray = persons.map(person => person.id === found.id ? 
+          const newArray = people.map(person => person.id === found.id ? 
             {...person, number: newNumber} : person)
-          setPersons(newArray)  // Update 
+          setPeople(newArray)  // Update 
           setError(false)       // Set notification as non-error
 
           // Show the notification for 5 seconds
@@ -84,7 +86,7 @@ const App = () => {
           setTimeout(() => {
             setNoteMessage(null)
           }, 5000)
-          setPersons(persons.filter(n => n.id !== found.id))
+          setPeople(people.filter(n => n.id !== found.id))
         })
       }
     // Name not found in the phonebook
@@ -94,7 +96,7 @@ const App = () => {
       .create(personObject)
       .then(response => {
         // Update
-        setPersons(persons.concat(response))
+        setPeople(people.concat(response))
         setNewName('')
         setNewNumber('')
         // Set notification as non-error
@@ -126,7 +128,7 @@ const App = () => {
   // handlePersonRemove - Removes a person from the phonebook
   const handlePersonRemove = (id) => {
     // find the name of the person using id
-    const name = persons.find(person => person.id === id).name
+    const name = people.find(person => person.id === id).name
     
     if (window.confirm(`Delete ${name}`) === true)
     {
@@ -135,9 +137,9 @@ const App = () => {
       .remove(id)
       .then(response => {
         // Filter a new array without the deleted user
-        const newArray = persons.filter(person => person.id !== id)
+        const newArray = people.filter(person => person.id !== id)
         // Update
-        setPersons(newArray)
+        setPeople(newArray)
         setError(false)       // Set notification as non-error
           // Show notification for 5 secoonds
           setNoteMessage(`Deleted ${name}`)
@@ -163,7 +165,7 @@ const App = () => {
         numberChanger={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} removeHandler={handlePersonRemove} />
+      <People people={people} filter={filter} removeHandler={handlePersonRemove} />
       
     </div>
   )    
