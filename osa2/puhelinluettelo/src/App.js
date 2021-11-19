@@ -107,6 +107,19 @@ const App = () => {
           setNoteMessage(null)
         }, 5000)
       })
+      // Validation error
+      .catch(error => {
+        // Set notification as an error
+        setError(true)
+        // Show notification for 5 secoonds
+        setNoteMessage(
+          error
+        )
+        setTimeout(() => {
+          setNoteMessage(null)
+        }, 5000)
+        setPeople(people.filter(n => n.id !== found.id))
+      })
     } 
   }
 
