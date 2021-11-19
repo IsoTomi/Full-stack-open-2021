@@ -33,7 +33,7 @@ if (process.argv.length == 5) {
   })
 } else {
   Person.find({}).then(result => {
-    console.log("Phonebook:")
+    console.log('Phonebook:')
     result.forEach(persons => {
       console.log(persons.name + ' ' + persons.number)
       mongoose.connection.close()

@@ -23,12 +23,12 @@ app.get('/info', (request, response) => {
 
   Person.count({}, function(err, result) {
     if (err) {
-      console.log(err);
+      console.log(err)
     } else {
-      response.send("<p>Phonebook has info for " + result + " people.</p>" + 
-        "<p>" + date + "</p>")
+      response.send('<p>Phonebook has info for ' + result + ' people.</p>' + 
+        '<p>' + date + '</p>')
     }
-  });
+  })
 })
 
 app.get('/api/people', (request, response) => {
