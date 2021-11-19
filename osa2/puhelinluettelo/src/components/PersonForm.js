@@ -12,8 +12,8 @@ const PersonForm = (props) => {
       <div>
         <button type="submit">add</button>
       </div>
-    </form>    
-  );
+    </form>
+  )
 }
 
 export default PersonForm

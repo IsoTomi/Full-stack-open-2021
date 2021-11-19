@@ -6,7 +6,7 @@ const Notification = ({ message, error }) => {
   }
 
   // Is the messsage an error message?
-  const className = error === true ? "error" : "notification"
+  const className = error === true ? 'error' : 'notification'
 
   return (
     <div className={className}>

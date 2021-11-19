@@ -1,7 +1,6 @@
 module.exports = {
   'env': {
     'browser': true,
-    'commonjs': true,
     'es2021': true
   },
   'extends': [
@@ -12,7 +11,8 @@ module.exports = {
     'ecmaFeatures': {
       'jsx': true
     },
-    'ecmaVersion': 12
+    'ecmaVersion': 12,
+    'sourceType': 'module'
   },
   'plugins': [
     'react'
@@ -33,6 +33,11 @@ module.exports = {
     'semi': [
       'error',
       'never'
-    ]
-  }
+    ],
+    'eqeqeq': 'error',
+    'no-trailing-spaces': 'error',
+    'object-curly-spacing': [
+      'error', 'always'
+    ],
+  },
 }
