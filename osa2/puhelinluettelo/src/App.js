@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Notification from './components/Notification'
-//import Persons from './components/Persons'
 import People from './components/People'
 import PersonForm from './components/PersonForm'
-//import personService from './services/persons'
 import personService from './services/people'
 
 // App-component
@@ -112,13 +110,11 @@ const App = () => {
         // Set notification as an error
         setError(true)
         // Show notification for 5 secoonds
-        setNoteMessage(
-          error
-        )
+        setNoteMessage(error.response.data.error)
         setTimeout(() => {
           setNoteMessage(null)
         }, 5000)
-        setPeople(people.filter(n => n.id !== found.id))
+        
       })
     } 
   }
