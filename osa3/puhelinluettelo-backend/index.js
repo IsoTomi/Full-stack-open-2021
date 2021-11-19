@@ -25,7 +25,7 @@ app.get('/info', (request, response) => {
     if (err) {
       console.log(err)
     } else {
-      response.send('<p>Phonebook has info for ' + result + ' people.</p>' + 
+      response.send('<p>Phonebook has info for ' + result + ' people.</p>' +
         '<p>' + date + '</p>')
     }
   })

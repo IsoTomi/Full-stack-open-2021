@@ -26,7 +26,7 @@ const person = new Person({
   number: number,
 })
 
-if (process.argv.length == 5) {
+if (process.argv.length === 5) {
   person.save().then(response => {
     console.log(`added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
